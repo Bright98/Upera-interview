@@ -19,21 +19,11 @@ type ProductAttributes struct {
 	ImageUrl    string `json:"image_url" bson:"image_url"`
 }
 type Revisions struct {
-	ProductID          string             `json:"Product_id" bson:"product_id"`
-	UpdatedAttributes  []string           `json:"updated_attributes" bson:"updated_attributes"`
-	PreviousAttributes *ProductAttributes `json:"previous_attributes" bson:"previous_attributes"`
-	NewAttributes      *ProductAttributes `json:"new_attributes" bson:"new_attributes"`
+	ProductID         string    `json:"Product_id" bson:"product_id"`
+	UpdatedAttributes []string  `json:"updated_attributes" bson:"updated_attributes"`
+	PreviousProduct   *Products `json:"previous_product" bson:"previous_product"`
+	NewProduct        *Products `json:"new_product" bson:"new_product"`
 }
-
-//type Revisions struct {
-//	ID                 string             `json:"id" bson:"_id"`
-//	ProductID          string             `json:"Product_id" bson:"product_id"`
-//	RevisionNo         int                `json:"revision_no" bson:"revision_no"`
-//	UpdatedAttributes  []string           `json:"updated_attributes" bson:"updated_attributes"`
-//	PreviousAttributes *ProductAttributes `json:"previous_attributes" bson:"previous_attributes"`
-//	NewAttributes      *ProductAttributes `json:"new_attributes" bson:"new_attributes"`
-//	UpdatedAt          int64              `json:"updated_at" bson:"updated_at"`
-//}
 
 // error type
 type Errors struct {

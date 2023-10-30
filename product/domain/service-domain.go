@@ -26,7 +26,7 @@ func (d *DomainService) InsertProductService(product *Products) (string, *Errors
 	revision := &Revisions{}
 	revision.ProductID = product.ID
 	revision.UpdatedAttributes = GetAllProductAttributeKeys(attributes)
-	revision.NewAttributes = attributes
+	revision.NewProduct = product
 	// TODO: insert first record in revisions
 
 	return product.ID, nil
@@ -37,13 +37,8 @@ func (d *DomainService) UpdateProductService(id string, productAttr *ProductAttr
 		return err
 	}
 
-	oldAttributes, err := ExtractAttributesFromProduct(product)
-	if err != nil {
-		return err
-	}
-
 	product.LastUpdatedAt = NowTime()
-	product, err = FillProductByNewAttributes(product, productAttr)
+	newProduct, err := FillProductByNewAttributes(product, productAttr)
 	if err != nil {
 		return err
 	}
@@ -56,9 +51,9 @@ func (d *DomainService) UpdateProductService(id string, productAttr *ProductAttr
 	// TODO: insert revision
 	revision := &Revisions{}
 	revision.ProductID = id
-	revision.PreviousAttributes = oldAttributes
-	revision.NewAttributes = productAttr
-	revision.UpdatedAttributes = GetDifferentKeysBetweenTwoStructs(oldAttributes, productAttr)
+	revision.PreviousProduct = product
+	revision.NewProduct = newProduct
+	revision.UpdatedAttributes = GetDifferentKeysBetweenTwoStructs(product, newProduct)
 
 	return nil
 }

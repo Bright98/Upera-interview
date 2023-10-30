@@ -37,6 +37,18 @@ func (r Repository) GetRevisionByIDRepository(id string) (*domain.Revisions, *do
 	}
 	return revision, nil
 }
+func (r Repository) GetRevisionByProductIDAndNoRepository(productID string, revisionNo int) (*domain.Revisions, *domain.Errors) {
+	ctx, cancel := context.WithTimeout(context.Background(), MongoTimeout)
+	defer cancel()
+	collection := MongoDatabase.Collection(domain.RevisionCollection)
+	filter := bson.M{"product_id": productID, "revision_no": revisionNo}
+	revision := &domain.Revisions{}
+	err := collection.FindOne(ctx, filter).Decode(revision)
+	if err != nil {
+		return nil, domain.SetError(domain.NotFoundErr, err.Error())
+	}
+	return revision, nil
+}
 func (r Repository) GetAllRevisionsOfOneProductRepository(skip, limit int64, productID string) ([]domain.Revisions, *domain.Errors) {
 	ctx, cancel := context.WithTimeout(context.Background(), MongoTimeout)
 	defer cancel()
