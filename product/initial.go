@@ -1,11 +1,12 @@
-package product
+package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"os"
-	"product/api"
 	"product/domain"
+	"product/received/api"
 	"product/repository"
 	"strconv"
 )
@@ -26,12 +27,20 @@ func mongoConnection() error {
 	}
 
 	//mongo connection
-	err = repository.MongoConnection(mongoUrl, database, mongoUsername, mongoPassword, timeoutInt)
+	return repository.MongoConnection(mongoUrl, database, mongoUsername, mongoPassword, timeoutInt)
+}
+func redisConnection() error {
+	//get redis requirements from env file
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+	db := os.Getenv("REDIS_DB")
+	dbInt, err := strconv.Atoi(db)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	//redis connection
+	return repository.RedisConnection(redisAddress, redisPassword, dbInt)
 }
 
 func init() {
@@ -48,11 +57,20 @@ func init() {
 	RestHandler = api.NewRestApi(service)
 	fmt.Println("-> Directory connection checked")
 
+	//mongo connection
 	err = mongoConnection()
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	fmt.Println("-> MongoDB connected")
 
+	//redis connection
+	err = redisConnection()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println("-> Redis connected")
+
 	PORT = getServerPort()
+	Gin = gin.Default()
 }

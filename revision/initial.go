@@ -1,11 +1,13 @@
-package product
+package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"os"
-	"revision/api"
 	"revision/domain"
+	"revision/received/api"
+	"revision/received/messaging"
 	"revision/repository"
 	"strconv"
 )
@@ -26,10 +28,28 @@ func mongoConnection() error {
 	}
 
 	//mongo connection
-	err = repository.MongoConnection(mongoUrl, database, mongoUsername, mongoPassword, timeoutInt)
+	return repository.MongoConnection(mongoUrl, database, mongoUsername, mongoPassword, timeoutInt)
+}
+func redisConnection() error {
+	//get redis requirements from env file
+	redisAddress := os.Getenv("REDIS_ADDRESS")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+	db := os.Getenv("REDIS_DB")
+	dbInt, err := strconv.Atoi(db)
 	if err != nil {
 		return err
 	}
+
+	//redis connection
+	client, ctx, err := repository.RedisConnection(redisAddress, redisPassword, dbInt)
+	if err != nil {
+		return err
+	}
+
+	redisReq := &RedisRequirements{}
+	redisReq.RedisClient = client
+	redisReq.RedisCtx = ctx
+	RedisReq = redisReq
 
 	return nil
 }
@@ -42,17 +62,27 @@ func init() {
 	}
 	fmt.Println("-> Environments loaded")
 
-	//handle directory connection
-	repo := repository.NewRepository()
-	service := domain.NewService(repo)
-	RestHandler = api.NewRestApi(service)
-	fmt.Println("-> Directory connection checked")
-
+	//mongo connection
 	err = mongoConnection()
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	fmt.Println("-> MongoDB connected")
 
+	//redis connection
+	err = redisConnection()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println("-> Redis connected")
+
+	//handle directory connection
+	Repo = repository.NewRepository()
+	service := domain.NewService(Repo)
+	RestHandler = api.NewRestApi(service)
+	MessageHandler = messaging.NewRedisMessage(RedisReq.RedisClient, RedisReq.RedisCtx, service)
+	fmt.Println("-> Directory connection checked")
+
 	PORT = getServerPort()
+	Gin = gin.Default()
 }

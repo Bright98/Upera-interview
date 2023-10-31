@@ -25,35 +25,46 @@ func (d *DomainService) InsertProductService(product *Products) (string, *Errors
 	}
 	revision := &Revisions{}
 	revision.ProductID = product.ID
-	revision.UpdatedAttributes = GetAllProductAttributeKeys(attributes)
+	revision.UpdatedAttributes = GetAllProductAttributeKeys(*attributes)
+	revision.PreviousProduct = nil
 	revision.NewProduct = product
-	// TODO: insert first record in revisions
+	err = d.SendRevisionMessage(revision)
+	if err != nil {
+		return "", err
+	}
 
 	return product.ID, nil
 }
 func (d *DomainService) UpdateProductService(id string, productAttr *ProductAttributes) *Errors {
+	//get old product
 	product, err := d.Repo.GetProductByIDRepository(id)
 	if err != nil {
 		return err
 	}
 
-	product.LastUpdatedAt = NowTime()
-	newProduct, err := FillProductByNewAttributes(product, productAttr)
+	//create new product from attributes
+	newProduct, err := FillProductByNewAttributes(*product, productAttr)
+	if err != nil {
+		return err
+	}
+	newProduct.LastUpdatedAt = NowTime()
+
+	//update product in db
+	err = d.Repo.UpdateProductRepository(newProduct)
 	if err != nil {
 		return err
 	}
 
-	err = d.Repo.UpdateProductRepository(product)
-	if err != nil {
-		return err
-	}
-
-	// TODO: insert revision
+	//fill revision fields and send
 	revision := &Revisions{}
 	revision.ProductID = id
 	revision.PreviousProduct = product
 	revision.NewProduct = newProduct
-	revision.UpdatedAttributes = GetDifferentKeysBetweenTwoStructs(product, newProduct)
+	revision.UpdatedAttributes = GetDifferentKeysBetweenTwoStructs(*product, *newProduct)
+	err = d.SendRevisionMessage(revision)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

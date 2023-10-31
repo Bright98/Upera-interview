@@ -73,3 +73,27 @@ func (r Repository) GetAllRevisionsOfOneProductRepository(skip, limit int64, pro
 	}
 	return result, nil
 }
+func (r Repository) GetLastRevisionNoOfProductRepository(productID string) (int, *domain.Errors) {
+	ctx, cancel := context.WithTimeout(context.Background(), MongoTimeout)
+	defer cancel()
+	collection := MongoDatabase.Collection(domain.RevisionCollection)
+	filter := bson.M{"product_id": productID}
+	option := options.Find().SetSort(bson.M{"revision_no": -1}).SetLimit(1)
+	res, err := collection.Find(ctx, filter, option)
+	if err != nil {
+		return 0, domain.SetError(domain.ServiceUnknownErr, err.Error())
+	}
+	var result []domain.Revisions
+	err = res.All(ctx, &result)
+	if err != nil {
+		return 0, domain.SetError(domain.ServiceUnknownErr, err.Error())
+	}
+	err = res.Close(ctx)
+	if err != nil {
+		return 0, domain.SetError(domain.ServiceUnknownErr, err.Error())
+	}
+	if len(result) > 0 {
+		return result[0].RevisionNo, nil
+	}
+	return -1, nil
+}

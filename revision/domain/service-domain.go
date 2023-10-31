@@ -1,6 +1,8 @@
 package domain
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type DomainService struct {
 	Repo RepositoryInterface
@@ -11,11 +13,29 @@ func NewService(repo RepositoryInterface) *DomainService {
 }
 
 func (d *DomainService) InsertRevisionService(revision *Revisions) (string, *Errors) {
+	//find last revision no from redis or db
+	revisionNo, err := d.Repo.GetLastRevisionNoRedis(revision.ProductID)
+	if err != nil {
+		//find from db
+		revisionNo, err = d.Repo.GetLastRevisionNoOfProductRepository(revision.ProductID)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	//fill some revision fields
 	revision.ID = GenerateID()
 	revision.UpdatedAt = NowTime()
-	// TODO: fill revision_no
+	revision.RevisionNo = revisionNo + 1
 
-	err := d.Repo.InsertRevisionRepository(revision)
+	//set last revision no in redis
+	err = d.Repo.SetLastRevisionNoRedis(revision.ProductID, revision.RevisionNo)
+	if err != nil {
+		return "", err
+	}
+
+	// insert revision in db
+	err = d.Repo.InsertRevisionRepository(revision)
 	if err != nil {
 		return "", err
 	}

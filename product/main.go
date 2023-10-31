@@ -1,10 +1,10 @@
-package product
+package main
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"product/api"
+	"product/received/api"
 )
 
 var (
@@ -15,6 +15,10 @@ var (
 
 func main() {
 	//define routes
+	Gin.POST("/api/product/products", RestHandler.InsertProduct) // route: /api/<service name>/<entity name>
+	Gin.PUT("/api/product/products/id/:product-id", RestHandler.UpdateProduct)
+	Gin.GET("/api/product/products/id/:product-id", RestHandler.GetProductByID)
+	Gin.GET("/api/product/products", RestHandler.GetAllProducts)
 
 	//run gin
 	err := Gin.Run(PORT)

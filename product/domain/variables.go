@@ -20,4 +20,5 @@ const (
 	CantCountErr      = "CANT_COUNT"
 	ServiceUnknownErr = "SERVICE_UNKNOWN"
 	InvalidationErr   = "INVALIDATION"
+	CantPublishErr    = "CANT_PUBLISH"
 )
