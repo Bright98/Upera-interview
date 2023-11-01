@@ -19,16 +19,11 @@ func NewRepository() domain.RepositoryInterface {
 }
 
 // mongo
-func MongoConnection(mongoUrl, database, username, password string, timeout int) error {
+func MongoConnection(mongoUrl, database string, timeout int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 	defer cancel()
 
-	var credential options.Credential
-	credential.Username = username
-	credential.Password = password
-
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUrl))
-	//client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUrl).SetAuth(credential))
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,217 @@
+{
+	"info": {
+		"_postman_id": "72a54fa9-61a4-4e61-a8be-6848ee31bc25",
+		"name": "upera-interview",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14956277"
+	},
+	"item": [
+		{
+			"name": "product",
+			"item": [
+				{
+					"name": "insert product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"product-1\",\r\n    \"description\": \"this is test product\",\r\n    \"color\": \"red\",\r\n    \"price\": 5000,\r\n    \"image_url\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/product/products",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"product-1\",\r\n    \"description\": \"this is test product\",\r\n    \"color\": \"pink\",\r\n    \"price\": 5000,\r\n    \"image_url\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/product/products/id/:product-id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"products",
+								"id",
+								":product-id"
+							],
+							"variable": [
+								{
+									"key": "product-id",
+									"value": "b6a04d06-78c8-11ee-8404-0242ac130003"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get specific product detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/product/products/id/:product-id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"products",
+								"id",
+								":product-id"
+							],
+							"variable": [
+								{
+									"key": "product-id",
+									"value": "b6a04d06-78c8-11ee-8404-0242ac130003"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/product/products?skip=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"products"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "revision",
+			"item": [
+				{
+					"name": "get all revisions of one product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5001/api/revision/products/id/:product-id/revisions?skip=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"revision",
+								"products",
+								"id",
+								":product-id",
+								"revisions"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							],
+							"variable": [
+								{
+									"key": "product-id",
+									"value": "b6a04d06-78c8-11ee-8404-0242ac130003"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get details of a specific product for a specific revision number",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5001/api/revision/products/id/:product-id/version-no/:version-no",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"revision",
+								"products",
+								"id",
+								":product-id",
+								"version-no",
+								":version-no"
+							],
+							"variable": [
+								{
+									"key": "product-id",
+									"value": "b6a04d06-78c8-11ee-8404-0242ac130003"
+								},
+								{
+									"key": "version-no",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

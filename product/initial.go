@@ -19,15 +19,13 @@ func mongoConnection() error {
 	timeout := os.Getenv("MONGO_TIMEOUT")
 	mongoUrl := os.Getenv("MONGO_URL")
 	database := os.Getenv("MONGO_DATABASE")
-	mongoUsername := os.Getenv("DB_USERNAME")
-	mongoPassword := os.Getenv("DB_PASSWORD")
 	timeoutInt, err := strconv.Atoi(timeout)
 	if err != nil {
 		return err
 	}
 
 	//mongo connection
-	return repository.MongoConnection(mongoUrl, database, mongoUsername, mongoPassword, timeoutInt)
+	return repository.MongoConnection(mongoUrl, database, timeoutInt)
 }
 func redisConnection() error {
 	//get redis requirements from env file
