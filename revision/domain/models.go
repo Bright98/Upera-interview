@@ -2,7 +2,7 @@ package domain
 
 type Revisions struct {
 	ID                string    `json:"id" bson:"_id"`
-	ProductID         string    `json:"Product_id" bson:"product_id"`
+	ProductID         string    `json:"product_id" bson:"product_id"`
 	RevisionNo        int       `json:"revision_no" bson:"revision_no"`
 	UpdatedAttributes []string  `json:"updated_attributes" bson:"updated_attributes"`
 	PreviousProduct   *Products `json:"previous_product" bson:"previous_product"`
