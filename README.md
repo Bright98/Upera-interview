@@ -64,6 +64,22 @@ The initial file contains an `init` function that handles the following steps:
 4. Starting the Gin server on the service port
 
 The main file handles the Gin methods and routes and subscribes to messages on separate threads, with each **thread** handling a specific channel.
+
+
+### Testing
+
+In the test folder, a series of tests are performed to ensure the system's correctness.
+These tests focus on verifying the following aspects:
+- **Environment Verification**:
+  - The tests thoroughly check the correctness of environment variables to ensure that they are correctly set up.
+- **Database and Cache Connectivity**:
+  - Verification is carried out to confirm that the database and cache connections are established and functioning correctly.
+- **Service Domain Function Operations**:
+  - The tests evaluate the functionality of the service domain functions, ensuring that they operate as expected.
+
+These tests play a crucial role in assuring the robustness and reliability of the system.
+They help identify and resolve potential issues early in the development process, contributing to the overall stability of the application.
+
 ### Dockerfile
 
 Each service has its Dockerfile for creating its Docker image.
